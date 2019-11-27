@@ -25,12 +25,13 @@ public class MainActivity extends AppCompatActivity {
 
         tvSeek = findViewById(R.id.idtvSeek);
         sbarGravity = findViewById(R.id.idSeekGravityThreshold);
-        sbarGravity.setProgress( prefs.getInt("ANGLE", 3) );
-        tvSeek.setText(""+sbarGravity.getProgress());
+        int savedAngle = prefs.getInt("ANGLE", 3);
+        sbarGravity.setProgress( savedAngle );
+        tvSeek.setText("Scanner activation angle: "+(10*savedAngle)+"°");
         sbarGravity.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
                                                    @Override
                                                    public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                                                        tvSeek.setText(""+(10*i)+"°");
+                                                        tvSeek.setText("Scanner activation angle: "+(10*i)+"°");
                                                    }
 
                                                    @Override
