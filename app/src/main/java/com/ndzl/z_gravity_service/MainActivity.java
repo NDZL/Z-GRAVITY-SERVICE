@@ -13,8 +13,7 @@ public class MainActivity extends AppCompatActivity {
 
     SeekBar sbarGravity;
     TextView tvSeek;
-
-
+    Intent intentPref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,17 +21,16 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         SharedPreferences prefs = getSharedPreferences("GRAVITY_CONFIG", MODE_PRIVATE);
-
-
+        intentPref = new Intent(this, GravityService.class);
 
         tvSeek = findViewById(R.id.idtvSeek);
         sbarGravity = findViewById(R.id.idSeekGravityThreshold);
-        sbarGravity.setProgress( prefs.getInt("ANGLE", 5) );
+        sbarGravity.setProgress( prefs.getInt("ANGLE", 3) );
         tvSeek.setText(""+sbarGravity.getProgress());
         sbarGravity.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
                                                    @Override
                                                    public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                                                        tvSeek.setText(""+i);
+                                                        tvSeek.setText(""+(10*i)+"°");
                                                    }
 
                                                    @Override
@@ -42,7 +40,8 @@ public class MainActivity extends AppCompatActivity {
 
                                                    @Override
                                                    public void onStopTrackingTouch(SeekBar seekBar) {
-
+                                                       intentPref.putExtra("GRAVITY_THRESHOLD", seekBar.getProgress());
+                                                       startService(intentPref);
                                                    }
                                                }
         );

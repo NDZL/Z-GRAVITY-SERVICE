@@ -17,6 +17,7 @@ public class GravityService extends Service implements SensorEventListener {
     private Sensor myGravitySensor;
     float standardGravity;
     float thresholdGraqvity;
+    float GRAVITY_PERCENT = .90f;
     boolean scan_enabled=true;
 
     public GravityService() {
@@ -30,6 +31,9 @@ public class GravityService extends Service implements SensorEventListener {
     }
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+
+        GRAVITY_PERCENT = (float)Math.cos( Math.PI * 10.0d * intent.getIntExtra("GRAVITY_THRESHOLD", 3) / 180 );
+        thresholdGraqvity = standardGravity * GRAVITY_PERCENT;
 
         return START_STICKY;
     }
@@ -47,7 +51,7 @@ public class GravityService extends Service implements SensorEventListener {
         i_stopscan.putExtra("com.motorolasolutions.emdk.datawedge.api.EXTRA_PARAMETER", "STOP_SCANNING");
 
         standardGravity = SensorManager.STANDARD_GRAVITY;
-        thresholdGraqvity = standardGravity*90/100;
+        thresholdGraqvity = standardGravity * GRAVITY_PERCENT;
         mySensorManager = (SensorManager)getSystemService(Context.SENSOR_SERVICE);
         myGravitySensor = mySensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY);
         mySensorManager.registerListener(this, myGravitySensor, SensorManager.SENSOR_DELAY_NORMAL);

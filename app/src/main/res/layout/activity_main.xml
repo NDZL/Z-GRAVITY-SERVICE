@@ -30,7 +30,7 @@
         style="@style/Widget.AppCompat.SeekBar.Discrete"
         android:layout_width="219dp"
         android:layout_height="31dp"
-        android:max="10"
+        android:max="9"
         android:progress="3"
         tools:layout_editor_absoluteX="94dp"
         tools:layout_editor_absoluteY="231dp" />
