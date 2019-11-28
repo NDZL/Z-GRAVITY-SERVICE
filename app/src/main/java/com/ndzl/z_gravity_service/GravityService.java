@@ -9,6 +9,8 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.IBinder;
 
+//ON NOV.28, 2019: "z-gravity-service_v1.2.apk" and shared to Stephan Jacobs
+
 public class GravityService extends Service implements SensorEventListener {
 
     Intent i_startscan;

@@ -9,6 +9,8 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+//this code named "z-gravity-service_v1.2.apk" and shared to Stephan Jacobs
+
 public class MainActivity extends AppCompatActivity {
 
     SeekBar sbarGravity;
