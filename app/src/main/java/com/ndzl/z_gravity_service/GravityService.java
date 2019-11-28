@@ -32,9 +32,10 @@ public class GravityService extends Service implements SensorEventListener {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-        GRAVITY_PERCENT = (float)Math.cos( Math.PI * 10.0d * intent.getIntExtra("GRAVITY_THRESHOLD", 3) / 180 );
-        thresholdGraqvity = standardGravity * GRAVITY_PERCENT;
-
+        if(intent != null) {
+            GRAVITY_PERCENT = (float) Math.cos(Math.PI * 10.0d * intent.getIntExtra("GRAVITY_THRESHOLD", 3) / 180);
+            thresholdGraqvity = standardGravity * GRAVITY_PERCENT;
+        }
         return START_STICKY;
     }
     @Override
