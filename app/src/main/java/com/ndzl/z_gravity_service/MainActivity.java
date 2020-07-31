@@ -9,7 +9,7 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-//this code named "z-gravity-service_v1.2.apk" and shared to Stephan Jacobs
+//some changes for A10 on jul31,2020
 
 public class MainActivity extends AppCompatActivity {
 
