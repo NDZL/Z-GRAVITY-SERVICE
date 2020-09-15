@@ -35,7 +35,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Z-GRAVITY-SERVICE.\nChoose the activation angle\nthen you can close me.\n(C)2020 v2.1"
+        android:text="Z-GRAVITY-SERVICE.\nChoose the activation angle\nthen you can close me.\n(C)2020 v2.2"
         android:textSize="18sp"
         android:textStyle="normal" />
 

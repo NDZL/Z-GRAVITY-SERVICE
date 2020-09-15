@@ -24,7 +24,9 @@
         <service
             android:name=".GravityService"
             android:enabled="true"
-            android:exported="true"></service>
+            android:exported="true"
+            android:stopWithTask="true">
+        </service>
     </application>
 
 </manifest>

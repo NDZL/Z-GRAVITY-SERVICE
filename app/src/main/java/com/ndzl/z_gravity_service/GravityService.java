@@ -45,6 +45,14 @@ public class GravityService extends Service implements SensorEventListener {
         return null;
     }
 
+    @Override
+    public void onTaskRemoved(Intent rootIntent) {
+
+        super.onTaskRemoved(rootIntent);
+
+        this.stopSelf();
+    }
+
     public static final String CHANNEL_ID = "Foreground Service Channel";
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
