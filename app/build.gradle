@@ -6,7 +6,7 @@ android {
 
     compileSdk 34
     defaultConfig {
-        applicationId "com.ndzl.z_gravity_service"
+        applicationId "com.zebra.sensorsdata"
         minSdk 30
         targetSdk 33
         versionCode 3

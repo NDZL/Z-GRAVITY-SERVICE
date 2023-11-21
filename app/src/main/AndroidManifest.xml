@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.ndzl.z_gravity_service">
+    package="com.zebra.sensorsdata">
 
 
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
@@ -17,7 +17,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light">
 
-        <activity android:name=".MainActivity" android:exported="true">
+        <activity android:name="com.zebra.sensorsdata.MainActivity" android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -26,7 +26,7 @@
         </activity>
 
         <service
-            android:name=".GravityService"
+            android:name="com.zebra.sensorsdata.GravityService"
             android:enabled="true"
             android:exported="true"
             android:stopWithTask="true">

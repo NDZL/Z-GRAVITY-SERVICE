@@ -1,10 +1,11 @@
-package com.ndzl.z_gravity_service
+package com.zebra.sensorsdata
 
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
+import com.zebra.sensorsdata.MainActivity
 
 //constants
 const val Activity_Intent_Filter = "com.zebra.sensors"
@@ -67,7 +68,7 @@ fun createDataWedgeProfile(context: Context, barcodeReceiver: BroadcastReceiver)
 
 fun datawedgeRegisterForNotifications(context: Context) {
     val bNotification = Bundle()
-    bNotification.putString("com.symbol.datawedge.api.APPLICATION_NAME", "com.ndzl.z_gravity_service")
+    bNotification.putString("com.symbol.datawedge.api.APPLICATION_NAME", "com.zebra.sensorsdata")
     bNotification.putString("com.symbol.datawedge.api.NOTIFICATION_TYPE", "SCANNER_STATUS")
     val i = Intent()
     i.action = "com.symbol.datawedge.api.ACTION"

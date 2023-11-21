@@ -1,6 +1,5 @@
-package com.ndzl.z_gravity_service;
+package com.zebra.sensorsdata;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -8,6 +7,8 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.zebra.sensorsdata.WiFence;
 
 //some changes for A10 on jul31,2020
 

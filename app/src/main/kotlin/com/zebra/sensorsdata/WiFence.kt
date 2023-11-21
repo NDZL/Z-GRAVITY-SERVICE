@@ -1,9 +1,10 @@
-package com.ndzl.z_gravity_service
+package com.zebra.sensorsdata
 
 import android.content.Context
 import android.media.AudioManager
 import android.media.ToneGenerator
 import android.net.wifi.WifiManager
+import com.zebra.sensorsdata.GravityService
 import java.util.Timer
 import kotlin.concurrent.timerTask
 

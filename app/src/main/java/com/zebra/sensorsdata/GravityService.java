@@ -1,4 +1,4 @@
-package com.ndzl.z_gravity_service;
+package com.zebra.sensorsdata;
 
 import static android.app.PendingIntent.FLAG_IMMUTABLE;
 
@@ -136,8 +136,9 @@ public class GravityService extends Service implements SensorEventListener {
     }
 
     private void logScanAndSensorsData(Intent dwScanIntent) {
-        //record format: SCAN_DATA, SCAN_SYMBOLOGY, ANGLE
+
         //https://developer.android.com/reference/android/hardware/SensorEvent#values
+
         if(dwScanIntent.getStringExtra("com.symbol.datawedge.data_string") != null){
             Log.i("Sensor Data", "SCAN DATA: " + dwScanIntent.getStringExtra("com.symbol.datawedge.data_string"));
             Log.i("Sensor Data", "SCAN TYPE: " + dwScanIntent.getStringExtra("com.symbol.datawedge.label_type"));
