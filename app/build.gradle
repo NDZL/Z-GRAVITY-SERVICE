@@ -6,7 +6,7 @@ android {
     defaultConfig {
         applicationId "com.ndzl.z_gravity_service"
         minSdk 30
-        targetSdk 30
+        targetSdk 33
         versionCode 3
         versionName '3.1'
 
