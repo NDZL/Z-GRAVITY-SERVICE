@@ -65,4 +65,13 @@ fun createDataWedgeProfile(context: Context, barcodeReceiver: BroadcastReceiver)
     context.registerReceiver(barcodeReceiver, filter)//register broadcast receiver
 }
 
+fun datawedgeRegisterForNotifications(context: Context) {
+    val bNotification = Bundle()
+    bNotification.putString("com.symbol.datawedge.api.APPLICATION_NAME", "com.ndzl.z_gravity_service")
+    bNotification.putString("com.symbol.datawedge.api.NOTIFICATION_TYPE", "SCANNER_STATUS")
+    val i = Intent()
+    i.action = "com.symbol.datawedge.api.ACTION"
+    i.putExtra("com.symbol.datawedge.api.REGISTER_FOR_NOTIFICATION", bNotification)
+    context.sendBroadcast(i)
+}
 

@@ -125,6 +125,7 @@ public class GravityService extends Service implements SensorEventListener {
 
             }
         });
+        BarcodeReceiverKt.datawedgeRegisterForNotifications(this);
 
         standardGravity = SensorManager.STANDARD_GRAVITY;
         thresholdGraqvity = standardGravity * GRAVITY_PERCENT;
@@ -137,8 +138,17 @@ public class GravityService extends Service implements SensorEventListener {
     private void logScanAndSensorsData(Intent dwScanIntent) {
         //record format: SCAN_DATA, SCAN_SYMBOLOGY, ANGLE
         //https://developer.android.com/reference/android/hardware/SensorEvent#values
-        Log.i("Sensor Data", "SCAN DATA: "+ dwScanIntent.getStringExtra("com.symbol.datawedge.data_string"));
-        Log.i("Sensor Data", "SCAN TYPE: "+ dwScanIntent.getStringExtra("com.symbol.datawedge.label_type"));
+        if(dwScanIntent.getStringExtra("com.symbol.datawedge.data_string") != null){
+            Log.i("Sensor Data", "SCAN DATA: " + dwScanIntent.getStringExtra("com.symbol.datawedge.data_string"));
+            Log.i("Sensor Data", "SCAN TYPE: " + dwScanIntent.getStringExtra("com.symbol.datawedge.label_type"));
+        }
+        if(dwScanIntent.getBundleExtra("com.symbol.datawedge.api.NOTIFICATION") != null){
+            String _status = dwScanIntent.getBundleExtra("com.symbol.datawedge.api.NOTIFICATION").getString("STATUS");
+            Log.i("Sensor Data", "SCAN NOTIFICATION: " + _status);
+        }
+        if(dwScanIntent.getStringExtra("com.symbol.datawedge.data_string") == null ) return; //not to log to many times the same data
+
+
         if(gravityEvents.size()>0){
             float[] gv = Objects.requireNonNull(gravityEvents.peek()).values;
             if(gv != null)
@@ -149,6 +159,7 @@ public class GravityService extends Service implements SensorEventListener {
             if(we != null)
                 Log.i("Sensor Data", "WIFI RSSI,BSSID,SSID: " + we.getRssi() + ", " + we.getBssid() + ", " + we.getSsid() );
         }
+        Log.i("Sensor Data", "-----------------------------------------------------------------------------------");
         //gravityEventsQueue.clear();
         //DO NOT CLEAR//wifiEventsQueue.clear();
     }
