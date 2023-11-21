@@ -1,20 +1,18 @@
 package com.ndzl.z_gravity_service
 
-import android.Manifest
-import android.content.BroadcastReceiver
 import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
-import android.content.pm.PackageManager
 import android.media.AudioManager
 import android.media.ToneGenerator
 import android.net.wifi.WifiManager
-import android.util.Log
-import androidx.core.app.ActivityCompat
 import java.util.Timer
 import kotlin.concurrent.timerTask
 
 
+class WifiEvent {
+    var rssi: Int = 0
+    var bssid: String = ""
+    var ssid: String = ""
+}
 public class WiFence(context: Context) {
 
         val localContext = context
@@ -23,7 +21,14 @@ public class WiFence(context: Context) {
 
             val tg = ToneGenerator(AudioManager.STREAM_ALARM, 100)
             Timer().schedule(timerTask {
-                Log.i("WiFence","WIFI RSSI: ${wifiManager.connectionInfo.rssi}")
+                // Log.i("WiFence","WIFI RSSI: ${wifiManager.connectionInfo.rssi}")
+
+                val wfinfo = WifiEvent()
+                wfinfo.rssi = wifiManager.connectionInfo.rssi
+                wfinfo.bssid = wifiManager.connectionInfo.bssid?.toString().orEmpty()
+                wfinfo.ssid = wifiManager.connectionInfo.ssid?.toString().orEmpty()
+
+                GravityService.wifiEvents.add( wfinfo )
                 if(wifiManager.connectionInfo.rssi<-80)
                     tg.startTone(ToneGenerator.TONE_CDMA_EMERGENCY_RINGBACK,200);
 
