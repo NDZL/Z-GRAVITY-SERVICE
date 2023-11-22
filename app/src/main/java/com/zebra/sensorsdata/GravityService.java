@@ -19,9 +19,6 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.core.app.NotificationCompat;
@@ -39,13 +36,16 @@ public class GravityService extends Service implements SensorEventListener {
     private Sensor myGravitySensor;
     private Sensor myStepDetectorSensor;
     float standardGravity;
-    float thresholdGraqvity;
+    float thresholdGravity;
     float GRAVITY_PERCENT = .90f;
     boolean scan_enabled=true;
 
     //public static ConcurrentLinkedQueue<SensorEvent> gravityEventsQueue = new ConcurrentLinkedQueue<SensorEvent>();
     public static Stack<SensorEvent> gravityEvents = new Stack<SensorEvent>();
     public static Stack<WifiEvent> wifiEvents = new Stack<WifiEvent>();
+
+    public static int stepsPreviouslyDetected = 0;
+    public static int stepsCurrentlyDetected = 0;
 
     public GravityService() {
         //ShowToastInIntentService("service constructor");
@@ -75,7 +75,7 @@ public class GravityService extends Service implements SensorEventListener {
 
         if(intent != null) {
             GRAVITY_PERCENT = (float) Math.cos(Math.PI * 10.0d * intent.getIntExtra("GRAVITY_THRESHOLD", 3) / 180);
-            thresholdGraqvity = standardGravity * GRAVITY_PERCENT;
+            thresholdGravity = standardGravity * GRAVITY_PERCENT;
         }
 
 
@@ -132,7 +132,7 @@ public class GravityService extends Service implements SensorEventListener {
         BarcodeReceiverKt.datawedgeRegisterForNotifications(this);
 
         standardGravity = SensorManager.STANDARD_GRAVITY;
-        thresholdGraqvity = standardGravity * GRAVITY_PERCENT;
+        thresholdGravity = standardGravity * GRAVITY_PERCENT;
         mySensorManager = (SensorManager)getSystemService(Context.SENSOR_SERVICE);
 
         myGravitySensor = mySensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY);
@@ -175,6 +175,12 @@ public class GravityService extends Service implements SensorEventListener {
                 logToScreen("WIFI RSSI,BSSID,SSID: " + we.getRssi() + ", " + we.getBssid() + ", " + we.getSsid());
             }
         }
+
+        Log.i("Sensor Data", "STEPS SINCE LAST EVENT: "+ (stepsCurrentlyDetected) );
+        logToScreen("STEPS SINCE LAST EVENT: "+(stepsCurrentlyDetected));
+        stepsPreviouslyDetected = stepsCurrentlyDetected;
+        stepsCurrentlyDetected= 0;
+
         Log.i("Sensor Data", "-----------------------------------------------------------------------------------");
         logToScreen("----------------");
 
@@ -207,12 +213,12 @@ public class GravityService extends Service implements SensorEventListener {
             Sensor source = event.sensor;
             float z = event.values[2];
             if (source.getType() == Sensor.TYPE_GRAVITY) {
-                if (z >= thresholdGraqvity) {
+                if (z >= thresholdGravity) {
                     if (scan_enabled) {
                         sendBroadcast(i_startscan);
                         scan_enabled = false;
                     }
-                } else if (z <= -thresholdGraqvity) {
+                } else if (z <= -thresholdGravity) {
                     sendBroadcast(i_stopscan);
                     scan_enabled = true;
                 } else {
@@ -221,9 +227,10 @@ public class GravityService extends Service implements SensorEventListener {
                 }
             }
         }
-        else if(event.sensor.getType() == Sensor.TYPE_STEP_DETECTOR){
-            Log.i("onSensorChanged", "TYPE_STEP_DETECTOR "+event.values[0]);
-            logToScreen("TYPE_STEP_DETECTOR "+event.values[0]);
+        else if(event.sensor.getType() == Sensor.TYPE_STEP_DETECTOR && event.values[0] == 1.0f){
+            //Log.i("onSensorChanged", "TYPE_STEP_DETECTOR "+event.values[0]);
+            stepsCurrentlyDetected++;
+            //logToScreen("TYPE_STEP_DETECTOR "+stepsDetected);
         }
     }
 
