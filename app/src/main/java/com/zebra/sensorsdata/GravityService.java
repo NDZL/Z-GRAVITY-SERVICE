@@ -37,6 +37,7 @@ public class GravityService extends Service implements SensorEventListener {
     Intent i_stopscan;
     private SensorManager mySensorManager;
     private Sensor myGravitySensor;
+    private Sensor myStepDetectorSensor;
     float standardGravity;
     float thresholdGraqvity;
     float GRAVITY_PERCENT = .90f;
@@ -133,9 +134,13 @@ public class GravityService extends Service implements SensorEventListener {
         standardGravity = SensorManager.STANDARD_GRAVITY;
         thresholdGraqvity = standardGravity * GRAVITY_PERCENT;
         mySensorManager = (SensorManager)getSystemService(Context.SENSOR_SERVICE);
+
         myGravitySensor = mySensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY);
         mySensorManager.registerListener(this, myGravitySensor, SensorManager.SENSOR_DELAY_NORMAL);
         //SAMPLING RATE: The value must be one of SENSOR_DELAY_NORMAL, SENSOR_DELAY_UI, SENSOR_DELAY_GAME, or SENSOR_DELAY_FASTEST or, the desired delay between events in microseconds. Specifying the delay in microseconds only works from Android 2.3 (API level 9) onwards.
+
+        myStepDetectorSensor = mySensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR);
+        mySensorManager.registerListener(this, myStepDetectorSensor, SensorManager.SENSOR_DELAY_NORMAL);
     }
 
     private void logScanAndSensorsData(Intent dwScanIntent) {
@@ -186,33 +191,39 @@ public class GravityService extends Service implements SensorEventListener {
     boolean isSensorchanged_notified=false;
     @Override
     public void onSensorChanged(SensorEvent event) {
-
-        if(event.sensor.getType() == Sensor.TYPE_GRAVITY)
-            gravityEvents.add(event);
-        //Log.i("onSensorChanged", new Date(System.currentTimeMillis() - SystemClock.elapsedRealtime() + event.timestamp / 1000000).toString());
-
-
-        if(!isSensorchanged_notified) {
+        if (!isSensorchanged_notified) {
             isSensorchanged_notified = true;
             //ShowToastInIntentService("service onSensorChanged");
         }
 
-        //SensorEventListener
-        Sensor source = event.sensor;
-        float z = event.values[2];
-        if(source.getType() == Sensor.TYPE_GRAVITY){
-            if (z >= thresholdGraqvity){
-                if(scan_enabled) {
-                    sendBroadcast(i_startscan);
-                    scan_enabled=false;
+        if(event.sensor.getType() == Sensor.TYPE_GRAVITY) {
+            gravityEvents.add(event);
+            //Log.i("onSensorChanged", new Date(System.currentTimeMillis() - SystemClock.elapsedRealtime() + event.timestamp / 1000000).toString());
+
+
+
+
+            //SensorEventListener
+            Sensor source = event.sensor;
+            float z = event.values[2];
+            if (source.getType() == Sensor.TYPE_GRAVITY) {
+                if (z >= thresholdGraqvity) {
+                    if (scan_enabled) {
+                        sendBroadcast(i_startscan);
+                        scan_enabled = false;
+                    }
+                } else if (z <= -thresholdGraqvity) {
+                    sendBroadcast(i_stopscan);
+                    scan_enabled = true;
+                } else {
+                    scan_enabled = true;
+                    sendBroadcast(i_stopscan);
                 }
-            }else if(z <= -thresholdGraqvity){
-                sendBroadcast(i_stopscan);
-                scan_enabled=true;
-            }else{
-                scan_enabled=true;
-                sendBroadcast(i_stopscan);
             }
+        }
+        else if(event.sensor.getType() == Sensor.TYPE_STEP_DETECTOR){
+            Log.i("onSensorChanged", "TYPE_STEP_DETECTOR "+event.values[0]);
+            logToScreen("TYPE_STEP_DETECTOR "+event.values[0]);
         }
     }
 
