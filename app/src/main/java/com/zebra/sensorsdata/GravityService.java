@@ -19,11 +19,23 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
+import android.os.SystemClock;
 import android.util.Log;
 import android.widget.Toast;
 
 import androidx.core.app.NotificationCompat;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Stack;
 
@@ -114,6 +126,8 @@ public class GravityService extends Service implements SensorEventListener {
 
         //ShowToastInIntentService("service onCreate");
 
+        initCSVLogFile();
+
         i_startscan = new Intent();
         i_startscan.setAction("com.motorolasolutions.emdk.datawedge.api.ACTION_SOFTSCANTRIGGER");
         i_startscan.putExtra("com.motorolasolutions.emdk.datawedge.api.EXTRA_PARAMETER", "START_SCANNING");
@@ -147,49 +161,103 @@ public class GravityService extends Service implements SensorEventListener {
     private void logScanAndSensorsData(Intent dwScanIntent) {
 
         //https://developer.android.com/reference/android/hardware/SensorEvent#values
+        StringBuilder sbSCAN_DATA = new StringBuilder();
+        StringBuilder sbNOTIFICATIONS = new StringBuilder();
+
+        if(dwScanIntent.getBundleExtra("com.symbol.datawedge.api.NOTIFICATION") != null){
+            String _status = dwScanIntent.getBundleExtra("com.symbol.datawedge.api.NOTIFICATION").getString("STATUS");
+            Log.i("Sensor Data", "SCAN NOTIFICATION: " + _status);
+            logToScreen("SCAN NOTIFICATION: "+_status);
+            sbNOTIFICATIONS.append(_status).append(",");
+
+            logToFile(sbNOTIFICATIONS.toString());
+
+        }
+        if(dwScanIntent.getStringExtra("com.symbol.datawedge.data_string") == null ) return; //not to log to many times the same data
 
         if(dwScanIntent.getStringExtra("com.symbol.datawedge.data_string") != null){
             Log.i("Sensor Data", "SCAN DATA: " + dwScanIntent.getStringExtra("com.symbol.datawedge.data_string"));
             Log.i("Sensor Data", "SCAN TYPE: " + dwScanIntent.getStringExtra("com.symbol.datawedge.label_type"));
             logToScreen("DATA: "+dwScanIntent.getStringExtra("com.symbol.datawedge.data_string"));
             logToScreen("TYPE: "+dwScanIntent.getStringExtra("com.symbol.datawedge.label_type"));
+            sbSCAN_DATA.append(",").append(dwScanIntent.getStringExtra("com.symbol.datawedge.data_string")).append(",").append( dwScanIntent.getStringExtra("com.symbol.datawedge.label_type") ).append(",");
         }
-        if(dwScanIntent.getBundleExtra("com.symbol.datawedge.api.NOTIFICATION") != null){
-            String _status = dwScanIntent.getBundleExtra("com.symbol.datawedge.api.NOTIFICATION").getString("STATUS");
-            Log.i("Sensor Data", "SCAN NOTIFICATION: " + _status);
-            logToScreen("SCAN NOTIFICATION: "+_status);
-        }
-        if(dwScanIntent.getStringExtra("com.symbol.datawedge.data_string") == null ) return; //not to log to many times the same data
 
+        if(wifiEvents.size()>0) {
+            WifiEvent we = Objects.requireNonNull(wifiEvents.peek());
+            if(we != null) {
+                Log.i("Sensor Data", "WIFI RSSI,BSSID,SSID: " + we.getRssi()+ ", " + we.getBssid() + ", " + we.getSsid());
+                logToScreen("WIFI RSSI,BSSID,SSID: " + we.getRssi()+ ", " + we.getBssid() + ", " + we.getSsid() );
+                sbSCAN_DATA.append(we.getRssi()).append(",").append(we.getBssid()).append(",").append(we.getSsid()).append(",");
+            }
+        }
 
         if(gravityEvents.size()>0){
             float[] gv = Objects.requireNonNull(gravityEvents.peek()).values;
             if(gv != null) {
                 Log.i("Sensor Data", "GRAVITY XYZ: " + gv[0] + ", " + gv[1] + ", " + gv[2]);
                 logToScreen("GRAVITY XYZ: " + gv[0] + ", " + gv[1] + ", " + gv[2]);
-            }
-
-        }
-        if(wifiEvents.size()>0) {
-            WifiEvent we = Objects.requireNonNull(wifiEvents.peek());
-            if(we != null) {
-                Log.i("Sensor Data", "WIFI RSSI,BSSID,SSID: " + we.getRssi()+ ", " + we.getBssid() + ", " + we.getSsid());
-                logToScreen("WIFI RSSI,BSSID,SSID: " + we.getRssi()+ ", " + we.getBssid() + ", " + we.getSsid() );
+                sbSCAN_DATA.append(gv[0]).append(",").append(gv[1]).append(",").append(gv[2]).append(",");
             }
         }
 
         Log.i("Sensor Data", "STEPS SINCE LAST EVENT: "+ (stepsCurrentlyDetected) );
         logToScreen("STEPS SINCE LAST EVENT: "+(stepsCurrentlyDetected));
+        sbSCAN_DATA.append(stepsCurrentlyDetected).append(",");
         stepsPreviouslyDetected = stepsCurrentlyDetected;
         stepsCurrentlyDetected= 0;
 
         Log.i("Sensor Data", "-----------------------------------------------------------------------------------");
         logToScreen("----------------");
 
+        logToFile(sbSCAN_DATA.toString());
+
+
         //gravityEventsQueue.clear();
         //DO NOT CLEAR//wifiEventsQueue.clear();
     }
 
+    private void logToFile(String dataToBeLogged) {
+
+        long epoch = System.currentTimeMillis();
+        Date date = new Date(epoch);
+        SimpleDateFormat dateFormatWithZone = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault());
+        String datetimeNow = dateFormatWithZone.format(date);
+
+        //String header = "EPOCH,TIMESTAMP,SCAN DATA,SCAN TYPE,WIFI RSSI,BSSID,SSID,GRAVITY X,GRAVITY Y,GRAVITY Z,STEPS SINCE LAST EVENT";
+        String fullstring = ""+epoch+","+ datetimeNow +","+ dataToBeLogged;
+        File file = new File("/enterprise/usr/persist/z-sensors-data-log.csv");
+        FileWriter fr = null;
+        try {
+            fr = new FileWriter(file, true);
+            fr.write(fullstring+"\n");
+            fr.close();
+        } catch (IOException e) {}
+
+
+
+    }
+
+    private void chmodFile(String sourcePath){
+        try {
+            Process _p = Runtime.getRuntime().exec("chmod 666 " + sourcePath); //chmod needed for /enterprise
+            _p.waitFor();
+        } catch (IOException e) {}
+        catch (InterruptedException e) {}
+
+    }
+
+    private void initCSVLogFile() {
+        File file = new File("/enterprise/usr/persist/z-sensors-data-log.csv");
+        FileWriter fr = null;
+        try {
+            fr = new FileWriter(file, false);
+            fr.write("EPOCH,TIMESTAMP,NOTIFICATION,SCAN DATA,SCAN TYPE,WIFI RSSI,BSSID,SSID,GRAVITY X,GRAVITY Y,GRAVITY Z,STEPS SINCE LAST EVENT\n");
+            fr.close();
+        } catch (IOException e) {}
+
+        chmodFile("/enterprise/usr/persist/z-sensors-data-log.csv");
+    }
 
     @Override
     public void onDestroy() {

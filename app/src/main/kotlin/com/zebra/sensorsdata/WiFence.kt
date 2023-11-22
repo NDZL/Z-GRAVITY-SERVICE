@@ -24,38 +24,6 @@ public class WiFence(context: Context) {
         val localContext = context
         val wifiManager = context.getSystemService(Context.WIFI_SERVICE) as WifiManager
 
-/*
-        val request = NetworkRequest.Builder()
-            .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
-            .build()
-        val connectivityManager = context.getSystemService(ConnectivityManager::class.java) //return null networkCapabilities.transportInfo on TC58 A11
-*/
-
-     /*   var networkIsAvailable : Boolean = false
-        val networkCallback = object : ConnectivityManager.NetworkCallback() {
-            override fun onAvailable(network: Network) {
-                networkIsAvailable = true
-            }
-
-            override fun onLost(network: Network) {
-                super.onLost(network)
-                networkIsAvailable = false
-            }
-
-            override fun onUnavailable() {
-                super.onUnavailable()
-                networkIsAvailable = false
-            }
-
-            override fun onCapabilitiesChanged(network: Network, networkCapabilities: NetworkCapabilities) {
-                super.onCapabilitiesChanged(network, networkCapabilities)
-
-                    val wifiInfo = networkCapabilities.transportInfo as WifiInfo
-                    GravityService.wifiEvents.add( wifiInfo )
-
-            }
-        }
-*/
         init {
 
             val tg = ToneGenerator(AudioManager.STREAM_ALARM, 100)
