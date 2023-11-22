@@ -18,3 +18,8 @@ the sensitivity valur in that case is 3 by default
 
   ![image](https://github.com/NDZL/Z-GRAVITY-SERVICE/assets/11386676/4c602ed0-a393-4711-bb08-fa46f2fe7941)
 ![image](https://github.com/NDZL/Z-GRAVITY-SERVICE/assets/11386676/794588f1-9675-4fa7-8a3a-44f4db0731b8)
+
+
+## APP INTERNALS
+- Supports Android 10+
+  ![image](https://github.com/NDZL/Z-GRAVITY-SERVICE/assets/11386676/a5e3ecb7-358d-403e-8b95-e82c4c4e47f1)
