@@ -21,5 +21,6 @@ the sensitivity valur in that case is 3 by default
 
 
 ## APP INTERNALS
-- Supports Android 10+
+- Designed for A13, Supports Android 10+
+  
   ![image](https://github.com/NDZL/Z-GRAVITY-SERVICE/assets/11386676/a5e3ecb7-358d-403e-8b95-e82c4c4e47f1)
