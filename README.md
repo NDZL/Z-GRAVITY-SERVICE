@@ -12,3 +12,6 @@ Any numbers between 0 (zero) and 9 are allowed.
 To pass no number just use
 adb shell am startservice com.zebra.sensorsdata/com.zebra.sensorsdata.GravityService 
 the sensitivity valur in that case is 3 by default
+
+
+![image](https://github.com/NDZL/Z-GRAVITY-SERVICE/assets/11386676/794588f1-9675-4fa7-8a3a-44f4db0731b8)
