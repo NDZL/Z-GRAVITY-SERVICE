@@ -34,10 +34,17 @@ import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
+import java.time.Clock;
+import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Stack;
+import java.util.TimeZone;
 
 //ON NOV.28, 2019: "z-gravity-service_v1.2.apk" and shared to Stephan Jacobs
 
@@ -211,21 +218,17 @@ public class GravityService extends Service implements SensorEventListener {
         logToScreen("----------------");
 
         logToFile(sbSCAN_DATA.toString());
-
-
-        //gravityEventsQueue.clear();
-        //DO NOT CLEAR//wifiEventsQueue.clear();
     }
 
     private void logToFile(String dataToBeLogged) {
-
-        long epoch = System.currentTimeMillis();
-        Date date = new Date(epoch);
-        SimpleDateFormat dateFormatWithZone = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault());
-        String datetimeNow = dateFormatWithZone.format(date);
+        Clock clockUTC = Clock.systemUTC();
+        long epochUTC = clockUTC.millis();
+        LocalDateTime zdt = LocalDateTime.now(clockUTC);
+        zdt.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+        String datetimeNow = zdt.toString();
 
         //String header = "EPOCH,TIMESTAMP,SCAN DATA,SCAN TYPE,WIFI RSSI,BSSID,SSID,GRAVITY X,GRAVITY Y,GRAVITY Z,STEPS SINCE LAST EVENT";
-        String fullstring = ""+epoch+","+ datetimeNow +","+ dataToBeLogged;
+        String fullstring = ""+epochUTC+","+ datetimeNow +","+ dataToBeLogged;
         File file = new File("/enterprise/usr/persist/z-sensors-data-log.csv");
         FileWriter fr = null;
         try {
@@ -252,7 +255,7 @@ public class GravityService extends Service implements SensorEventListener {
         FileWriter fr = null;
         try {
             fr = new FileWriter(file, false);
-            fr.write("EPOCH,TIMESTAMP,NOTIFICATION,SCAN DATA,SCAN TYPE,WIFI RSSI,BSSID,SSID,GRAVITY X,GRAVITY Y,GRAVITY Z,STEPS SINCE LAST EVENT\n");
+            fr.write("EPOCH UTC,TIMESTAMP UTC,NOTIFICATION,SCAN DATA,SCAN TYPE,WIFI RSSI,BSSID,SSID,GRAVITY X,GRAVITY Y,GRAVITY Z,STEPS SINCE LAST EVENT\n");
             fr.close();
         } catch (IOException e) {}
 
@@ -275,27 +278,6 @@ public class GravityService extends Service implements SensorEventListener {
         if(event.sensor.getType() == Sensor.TYPE_GRAVITY) {
             gravityEvents.add(event);
             //Log.i("onSensorChanged", new Date(System.currentTimeMillis() - SystemClock.elapsedRealtime() + event.timestamp / 1000000).toString());
-
-
-
-
-            //SensorEventListener
-            Sensor source = event.sensor;
-            float z = event.values[2];
-            if (source.getType() == Sensor.TYPE_GRAVITY) {
-                if (z >= thresholdGravity) {
-                    if (scan_enabled) {
-                        sendBroadcast(i_startscan);
-                        scan_enabled = false;
-                    }
-                } else if (z <= -thresholdGravity) {
-                    sendBroadcast(i_stopscan);
-                    scan_enabled = true;
-                } else {
-                    scan_enabled = true;
-                    sendBroadcast(i_stopscan);
-                }
-            }
         }
         else if(event.sensor.getType() == Sensor.TYPE_STEP_DETECTOR && event.values[0] == 1.0f){
             //Log.i("onSensorChanged", "TYPE_STEP_DETECTOR "+event.values[0]);
