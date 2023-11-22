@@ -3,6 +3,11 @@ package com.zebra.sensorsdata
 import android.content.Context
 import android.media.AudioManager
 import android.media.ToneGenerator
+import android.net.ConnectivityManager
+import android.net.Network
+import android.net.NetworkCapabilities
+import android.net.NetworkRequest
+import android.net.wifi.WifiInfo
 import android.net.wifi.WifiManager
 import android.util.Log
 import com.zebra.sensorsdata.GravityService
@@ -10,28 +15,51 @@ import java.util.Timer
 import kotlin.concurrent.timerTask
 
 
-class WifiEvent {
-    var rssi: Int = 0
-    var bssid: String = ""
-    var ssid: String = ""
-}
+
 public class WiFence(context: Context) {
 
         val localContext = context
-        val wifiManager = context.getSystemService(Context.WIFI_SERVICE) as WifiManager
+      //  val wifiManager = context.getSystemService(Context.WIFI_SERVICE) as WifiManager
+
+        val request = NetworkRequest.Builder()
+            .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
+            .build()
+        val connectivityManager = context.getSystemService(ConnectivityManager::class.java)
+
+        var networkIsAvailable : Boolean = false
+        val networkCallback = object : ConnectivityManager.NetworkCallback() {
+            override fun onAvailable(network: Network) {
+                networkIsAvailable = true
+            }
+
+            override fun onLost(network: Network) {
+                super.onLost(network)
+                networkIsAvailable = false
+            }
+
+            override fun onUnavailable() {
+                super.onUnavailable()
+                networkIsAvailable = false
+            }
+
+
+            override fun onCapabilitiesChanged(network: Network, networkCapabilities: NetworkCapabilities) {
+                val wifiInfo = networkCapabilities.transportInfo as WifiInfo
+                GravityService.wifiEvents.add( wifiInfo )
+            }
+        }
+
         init {
+
+            connectivityManager.requestNetwork(request, networkCallback)
+            connectivityManager.registerNetworkCallback(request, networkCallback)
 
             val tg = ToneGenerator(AudioManager.STREAM_ALARM, 100)
             Timer().schedule(timerTask {
                 // Log.i("WiFence","WIFI RSSI: ${wifiManager.connectionInfo.rssi}")
 
-                val wfinfo = WifiEvent()
-                wfinfo.rssi = wifiManager.connectionInfo.rssi
-                wfinfo.bssid = wifiManager.connectionInfo.bssid?.toString().orEmpty()
-                wfinfo.ssid = wifiManager.connectionInfo.ssid?.toString().orEmpty()
 
-                GravityService.wifiEvents.add( wfinfo )
-                if(wifiManager.connectionInfo.rssi<-80) {
+                if(GravityService.wifiEvents.size>0 && (GravityService.wifiEvents.peek().rssi<-80 || !networkIsAvailable) ) {
                     tg.startTone(ToneGenerator.TONE_CDMA_EMERGENCY_RINGBACK, 200);
                     Log.i("Geofence Alarm","DEVICE LEFT THE WIFI AREA")
                 }

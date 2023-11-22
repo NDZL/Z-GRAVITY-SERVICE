@@ -14,6 +14,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.net.wifi.WifiInfo;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
@@ -42,7 +43,7 @@ public class GravityService extends Service implements SensorEventListener {
 
     //public static ConcurrentLinkedQueue<SensorEvent> gravityEventsQueue = new ConcurrentLinkedQueue<SensorEvent>();
     public static Stack<SensorEvent> gravityEvents = new Stack<SensorEvent>();
-    public static Stack<WifiEvent> wifiEvents = new Stack<WifiEvent>();
+    public static Stack<WifiInfo> wifiEvents = new Stack<WifiInfo>();
 
     public static int stepsPreviouslyDetected = 0;
     public static int stepsCurrentlyDetected = 0;
@@ -169,10 +170,10 @@ public class GravityService extends Service implements SensorEventListener {
 
         }
         if(wifiEvents.size()>0) {
-            WifiEvent we = Objects.requireNonNull(wifiEvents.peek());
+            WifiInfo we = Objects.requireNonNull(wifiEvents.peek());
             if(we != null) {
-                Log.i("Sensor Data", "WIFI RSSI,BSSID,SSID: " + we.getRssi() + ", " + we.getBssid() + ", " + we.getSsid());
-                logToScreen("WIFI RSSI,BSSID,SSID: " + we.getRssi() + ", " + we.getBssid() + ", " + we.getSsid());
+                Log.i("Sensor Data", "WIFI RSSI,BSSID,SSID,MAC: " + we.getRssi()+ ", " + we.getBSSID() + ", " + we.getSSID()+", "+we.getMacAddress() );
+                logToScreen("WIFI RSSI,BSSID,SSID,MAC: " + we.getRssi()+ ", " + we.getBSSID() + ", " + we.getSSID()+", "+we.getMacAddress() );
             }
         }
 
