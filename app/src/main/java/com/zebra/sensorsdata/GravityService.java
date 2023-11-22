@@ -19,6 +19,9 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.core.app.NotificationCompat;
@@ -142,6 +145,8 @@ public class GravityService extends Service implements SensorEventListener {
         if(dwScanIntent.getStringExtra("com.symbol.datawedge.data_string") != null){
             Log.i("Sensor Data", "SCAN DATA: " + dwScanIntent.getStringExtra("com.symbol.datawedge.data_string"));
             Log.i("Sensor Data", "SCAN TYPE: " + dwScanIntent.getStringExtra("com.symbol.datawedge.label_type"));
+            logToScreen("DATA: "+dwScanIntent.getStringExtra("com.symbol.datawedge.data_string"));
+            logToScreen("TYPE: "+dwScanIntent.getStringExtra("com.symbol.datawedge.label_type"));
         }
         if(dwScanIntent.getBundleExtra("com.symbol.datawedge.api.NOTIFICATION") != null){
             String _status = dwScanIntent.getBundleExtra("com.symbol.datawedge.api.NOTIFICATION").getString("STATUS");
@@ -152,15 +157,22 @@ public class GravityService extends Service implements SensorEventListener {
 
         if(gravityEvents.size()>0){
             float[] gv = Objects.requireNonNull(gravityEvents.peek()).values;
-            if(gv != null)
-                Log.i("Sensor Data", "GRAVITY XYZ: "+ gv[0] + ", "+ gv[1] + ", "+ gv[2] ) ;
+            if(gv != null) {
+                Log.i("Sensor Data", "GRAVITY XYZ: " + gv[0] + ", " + gv[1] + ", " + gv[2]);
+                logToScreen("GRAVITY XYZ: " + gv[0] + ", " + gv[1] + ", " + gv[2]);
+            }
+
         }
         if(wifiEvents.size()>0) {
             WifiEvent we = Objects.requireNonNull(wifiEvents.peek());
-            if(we != null)
-                Log.i("Sensor Data", "WIFI RSSI,BSSID,SSID: " + we.getRssi() + ", " + we.getBssid() + ", " + we.getSsid() );
+            if(we != null) {
+                Log.i("Sensor Data", "WIFI RSSI,BSSID,SSID: " + we.getRssi() + ", " + we.getBssid() + ", " + we.getSsid());
+                logToScreen("WIFI RSSI,BSSID,SSID: " + we.getRssi() + ", " + we.getBssid() + ", " + we.getSsid());
+            }
         }
         Log.i("Sensor Data", "-----------------------------------------------------------------------------------");
+        logToScreen("----------------");
+
         //gravityEventsQueue.clear();
         //DO NOT CLEAR//wifiEventsQueue.clear();
     }
@@ -220,4 +232,9 @@ public class GravityService extends Service implements SensorEventListener {
             }
         });
     };
+
+    public void logToScreen(final String sText) {
+        MainActivity.tvOut.setText(sText+"\n"+MainActivity.tvOut.getText());
+    };
+
 }

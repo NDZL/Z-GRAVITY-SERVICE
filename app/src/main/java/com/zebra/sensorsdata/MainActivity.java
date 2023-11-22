@@ -3,6 +3,7 @@ package com.zebra.sensorsdata;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.method.ScrollingMovementMethod;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -16,6 +17,7 @@ public class MainActivity extends AppCompatActivity {
 
     SeekBar sbarGravity;
     TextView tvSeek;
+    public static TextView tvOut;
     Intent intentPref;
 
     @Override
@@ -27,6 +29,10 @@ public class MainActivity extends AppCompatActivity {
         intentPref = new Intent(this, GravityService.class);
 
         tvSeek = findViewById(R.id.idtvSeek);
+        tvOut = findViewById(R.id.tvOutput);
+        tvOut.setMovementMethod(new ScrollingMovementMethod());
+        tvOut.setText( "...\n"+tvOut.getText());
+
         sbarGravity = findViewById(R.id.idSeekGravityThreshold);
         int savedAngle = prefs.getInt("ANGLE", 3);
         sbarGravity.setProgress( savedAngle );
