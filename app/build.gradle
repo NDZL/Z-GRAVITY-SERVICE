@@ -7,7 +7,7 @@ android {
     compileSdk 34
     defaultConfig {
         applicationId "com.zebra.sensorsdata"
-        minSdk 30
+        minSdk 29
         targetSdk 33
         versionCode 3
         versionName '3.1'
