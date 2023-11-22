@@ -9,8 +9,8 @@ android {
         applicationId "com.zebra.sensorsdata"
         minSdk 28
         targetSdk 33
-        versionCode 3
-        versionName '3.1'
+        versionCode 1
+        versionName '1.0'
 
     }
 
