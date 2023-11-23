@@ -21,13 +21,13 @@ the sensitivity valur in that case is 3 by default
 
 
 ## APP INTERNALS
-- Designed for A13, Supports Android 10+
-  
-  ![image](https://github.com/NDZL/Z-GRAVITY-SERVICE/assets/11386676/a5e3ecb7-358d-403e-8b95-e82c4c4e47f1)
+- Designed for A13, Supports Android 9+
+
+  ![image](https://github.com/NDZL/Z-GRAVITY-SERVICE/assets/11386676/b38b9333-c2f0-4443-883c-8fb2b80dee58)
 
 - Retrieve the log file
--- adb pull /enterprise/usr/persist/z-sensors-data-log.csv
+-   adb pull /enterprise/usr/persist/z-sensors-data-log.csv
 
 - View the log file
--- adb shell more /enterprise/usr/persist/z-sensors-data-log.csv
+-  adb shell more /enterprise/usr/persist/z-sensors-data-log.csv
 
