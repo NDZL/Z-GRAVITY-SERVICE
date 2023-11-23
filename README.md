@@ -25,9 +25,9 @@ the sensitivity valur in that case is 3 by default
 
   ![image](https://github.com/NDZL/Z-GRAVITY-SERVICE/assets/11386676/b38b9333-c2f0-4443-883c-8fb2b80dee58)
 
-. Retrieve the log file
-.. adb pull /enterprise/usr/persist/z-sensors-data-log.csv
+* Retrieve the log file
+  * adb pull /enterprise/usr/persist/z-sensors-data-log.csv
 
-. View the log file
-..  adb shell more /enterprise/usr/persist/z-sensors-data-log.csv
+* View the log file
+  * adb shell more /enterprise/usr/persist/z-sensors-data-log.csv
 
