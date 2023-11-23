@@ -200,11 +200,13 @@ public class GravityService extends Service implements SensorEventListener {
         }
 
         if(gravityEvents.size()>0){
-            float[] gv = Objects.requireNonNull(gravityEvents.peek()).values;
+            SensorEvent targetEvent = gravityEvents.peek();
+            float[] gv = Objects.requireNonNull(targetEvent).values;
             if(gv != null) {
-                Log.i("Sensor Data", "GRAVITY XYZ: " + gv[0] + ", " + gv[1] + ", " + gv[2]);
-                logToScreen("GRAVITY XYZ: " + gv[0] + ", " + gv[1] + ", " + gv[2]);
-                sbSCAN_DATA.append(gv[0]).append(",").append(gv[1]).append(",").append(gv[2]).append(",");
+                String devicePose = computeDevicePose(targetEvent);
+                Log.i("Sensor Data", "GRAVITY XYZ: " + gv[0] + ", " + gv[1] + ", " + gv[2] + ", " + devicePose + ",");
+                logToScreen("GRAVITY XYZ: " + gv[0] + ", " + gv[1] + ", " + gv[2] + ", " + devicePose + ",");
+                sbSCAN_DATA.append(gv[0]).append(",").append(gv[1]).append(",").append(gv[2]).append(",").append(devicePose).append(",");
             }
         }
 
@@ -218,6 +220,18 @@ public class GravityService extends Service implements SensorEventListener {
         logToScreen("----------------");
 
         logToFile(sbSCAN_DATA.toString());
+    }
+
+    private String computeDevicePose(SensorEvent targetEvent) {
+        float[] gv = Objects.requireNonNull(targetEvent).values;
+        float angleToHorizPlane = (float)(Math.atan(  gv[1] /  Math.sqrt( gv[2]*gv[2]+ gv[0]*gv[0] ) ) *180/Math.PI  );
+        String pose ="";
+        if(angleToHorizPlane > 15 && angleToHorizPlane<75)   pose = "UP";
+        else if(angleToHorizPlane>75) pose = "SKY";
+        else if(angleToHorizPlane < -15 && angleToHorizPlane>-75) pose = "DW";
+        else if(angleToHorizPlane<-75) pose = "GROUND";
+        else pose = "FLAT";
+        return pose+"("+Math.abs(  Math.round(angleToHorizPlane) )+"DEG)";
     }
 
     private void logToFile(String dataToBeLogged) {
@@ -255,7 +269,7 @@ public class GravityService extends Service implements SensorEventListener {
         FileWriter fr = null;
         try {
             fr = new FileWriter(file, false);
-            fr.write("EPOCH UTC,TIMESTAMP UTC,NOTIFICATION,SCAN DATA,SCAN TYPE,WIFI RSSI,BSSID,SSID,GRAVITY X,GRAVITY Y,GRAVITY Z,STEPS SINCE LAST EVENT\n");
+            fr.write("EPOCH UTC,TIMESTAMP UTC,NOTIFICATION,SCAN DATA,SCAN TYPE,WIFI RSSI,BSSID,SSID,GRAVITY X,GRAVITY Y,GRAVITY Z,POSE,STEPS SINCE LAST EVENT\n");
             fr.close();
         } catch (IOException e) {}
 
