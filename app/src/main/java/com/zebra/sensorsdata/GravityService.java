@@ -168,58 +168,84 @@ public class GravityService extends Service implements SensorEventListener {
     private void logScanAndSensorsData(Intent dwScanIntent) {
 
         //https://developer.android.com/reference/android/hardware/SensorEvent#values
-        StringBuilder sbSCAN_DATA = new StringBuilder();
-        StringBuilder sbNOTIFICATIONS = new StringBuilder();
+        //StringBuilder sbSCAN_DATA = new StringBuilder();
+        //StringBuilder sbNOTIFICATIONS = new StringBuilder();
+        StringBuilder sbAcquiredData = new StringBuilder();
 
-        if(dwScanIntent.getBundleExtra("com.symbol.datawedge.api.NOTIFICATION") != null){
-            String _status = dwScanIntent.getBundleExtra("com.symbol.datawedge.api.NOTIFICATION").getString("STATUS");
-            Log.i("Sensor Data", "SCAN NOTIFICATION: " + _status);
-            logToScreen("SCAN NOTIFICATION: "+_status);
-            sbNOTIFICATIONS.append(_status).append(",");
-
-            logToFile(sbNOTIFICATIONS.toString());
-
+        String scanner_Status = "N/A";
+        if(dwScanIntent.getBundleExtra("com.symbol.datawedge.api.NOTIFICATION") != null) {
+            scanner_Status= dwScanIntent.getBundleExtra("com.symbol.datawedge.api.NOTIFICATION").getString("STATUS");
+            sbAcquiredData.append(scanner_Status).append(",");
         }
-        if(dwScanIntent.getStringExtra("com.symbol.datawedge.data_string") == null ) return; //not to log to many times the same data
+            Log.i("Sensor Data", "SCAN NOTIFICATION: " + scanner_Status);
+            logToScreen("SCAN NOTIFICATION: "+scanner_Status);
 
-        if(dwScanIntent.getStringExtra("com.symbol.datawedge.data_string") != null){
-            Log.i("Sensor Data", "SCAN DATA: " + dwScanIntent.getStringExtra("com.symbol.datawedge.data_string"));
-            Log.i("Sensor Data", "SCAN TYPE: " + dwScanIntent.getStringExtra("com.symbol.datawedge.label_type"));
-            logToScreen("DATA: "+dwScanIntent.getStringExtra("com.symbol.datawedge.data_string"));
-            logToScreen("TYPE: "+dwScanIntent.getStringExtra("com.symbol.datawedge.label_type"));
-            sbSCAN_DATA.append(",").append(dwScanIntent.getStringExtra("com.symbol.datawedge.data_string")).append(",").append( dwScanIntent.getStringExtra("com.symbol.datawedge.label_type") ).append(",");
+
+            //logToFile(sbNOTIFICATIONS.toString());
+
+
+            // if(dwScanIntent.getStringExtra("com.symbol.datawedge.data_string") == null ) return; //not to log to many times the same data
+
+        String scan_data = "N/A";
+        String scan_type = "N/A";
+        if (dwScanIntent.getStringExtra("com.symbol.datawedge.data_string") != null) {
+            scan_data = dwScanIntent.getStringExtra("com.symbol.datawedge.data_string");
+            scan_type = dwScanIntent.getStringExtra("com.symbol.datawedge.label_type");
+            sbAcquiredData.append("READ,");
         }
+        Log.i("Sensor Data", "SCAN DATA: " + scan_data);
+        Log.i("Sensor Data", "SCAN TYPE: " + scan_type);
+        logToScreen("DATA: " + scan_data);
+        logToScreen("TYPE: " + scan_type);
+        sbAcquiredData.append(scan_data).append(",").append(scan_type).append(",");
 
-        if(wifiEvents.size()>0) {
+
+        String wifi_rssi = "N/A";
+        String wifi_bssid = "N/A";
+        String wifi_ssid = "N/A";
+        if (wifiEvents.size() > 0) {
             WifiEvent we = Objects.requireNonNull(wifiEvents.peek());
-            if(we != null) {
-                Log.i("Sensor Data", "WIFI RSSI,BSSID,SSID: " + we.getRssi()+ ", " + we.getBssid() + ", " + we.getSsid());
-                logToScreen("WIFI RSSI,BSSID,SSID: " + we.getRssi()+ ", " + we.getBssid() + ", " + we.getSsid() );
-                sbSCAN_DATA.append(we.getRssi()).append(",").append(we.getBssid()).append(",").append(we.getSsid()).append(",");
+            if (we != null) {
+                wifi_rssi = String.valueOf(we.getRssi());
+                wifi_bssid = we.getBssid();
+                wifi_ssid = we.getSsid();
             }
         }
+        Log.i("Sensor Data", "WIFI RSSI,BSSID,SSID: " + wifi_rssi + ", " + wifi_bssid + ", " + wifi_ssid);
+        logToScreen("WIFI RSSI,BSSID,SSID: " + wifi_rssi + ", " + wifi_bssid + ", " + wifi_ssid);
+        sbAcquiredData.append(wifi_rssi).append(",").append(wifi_bssid).append(",").append(wifi_ssid).append(",");
 
-        if(gravityEvents.size()>0){
+
+        String devicePose="N/A";
+        String gx="N/A";
+        String gy="N/A";
+        String gz="N/A";
+        if (gravityEvents.size() > 0) {
             SensorEvent targetEvent = gravityEvents.peek();
             float[] gv = Objects.requireNonNull(targetEvent).values;
-            if(gv != null) {
-                String devicePose = computeDevicePose(targetEvent);
-                Log.i("Sensor Data", "GRAVITY XYZ: " + gv[0] + ", " + gv[1] + ", " + gv[2] + ", " + devicePose + ",");
-                logToScreen("GRAVITY XYZ: " + gv[0] + ", " + gv[1] + ", " + gv[2] + ", " + devicePose + ",");
-                sbSCAN_DATA.append(gv[0]).append(",").append(gv[1]).append(",").append(gv[2]).append(",").append(devicePose).append(",");
+
+            if (gv != null) {
+                devicePose = computeDevicePose(targetEvent);
+                gx= String.valueOf(gv[0]);
+                gy= String.valueOf(gv[1]);
+                gz= String.valueOf(gv[2]);
             }
         }
+        Log.i("Sensor Data", "GRAVITY XYZ: " + gx + ", " + gy+ ", " + gz + ", " + devicePose + ",");
+        logToScreen("GRAVITY XYZ: " + gx + ", " + gy+ ", " + gz + ", " + devicePose + ",");
+        sbAcquiredData.append(gx).append(",").append(gy).append(",").append(gz).append(",").append(devicePose).append(",");
 
-        Log.i("Sensor Data", "STEPS SINCE LAST EVENT: "+ (stepsCurrentlyDetected) );
-        logToScreen("STEPS SINCE LAST EVENT: "+(stepsCurrentlyDetected));
-        sbSCAN_DATA.append(stepsCurrentlyDetected).append(",");
+        Log.i("Sensor Data", "STEPS SINCE LAST EVENT: " + (stepsCurrentlyDetected));
+        logToScreen("STEPS SINCE LAST EVENT: " + (stepsCurrentlyDetected));
+        sbAcquiredData.append(stepsCurrentlyDetected).append(",");
         stepsPreviouslyDetected = stepsCurrentlyDetected;
-        stepsCurrentlyDetected= 0;
+        stepsCurrentlyDetected = 0;
 
         Log.i("Sensor Data", "-----------------------------------------------------------------------------------");
         logToScreen("----------------");
 
-        logToFile(sbSCAN_DATA.toString());
+
+        logToFile(sbAcquiredData.toString());
     }
 
     private String computeDevicePose(SensorEvent targetEvent) {
@@ -250,9 +276,6 @@ public class GravityService extends Service implements SensorEventListener {
             fr.write(fullstring+"\n");
             fr.close();
         } catch (IOException e) {}
-
-
-
     }
 
     private void chmodFile(String sourcePath){
