@@ -31,7 +31,7 @@ the sensitivity valur in that case is 3 by default
 * To view the log file
   * adb shell more /enterprise/usr/persist/z-sensors-data-log.csv
  
-* To remove an existing log
+* To remove an existing log (specifically if you migrated from a previous app version)
   * adb shell rm /enterprise/usr/persist/z-sensors-data-log.csv
  
    
