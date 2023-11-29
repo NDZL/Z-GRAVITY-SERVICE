@@ -32,7 +32,9 @@ the sensitivity valur in that case is 3 by default
   * adb shell more /enterprise/usr/persist/z-sensors-data-log.csv
  
 * To remove an existing log (specifically if you migrated from a previous app version)
-  * adb shell rm /enterprise/usr/persist/z-sensors-data-log.csv
+  1. restart the device 
+  1. adb shell rm /enterprise/usr/persist/z-sensors-data-log.csv
+  1. start z-gravity-service app
  
    
 
