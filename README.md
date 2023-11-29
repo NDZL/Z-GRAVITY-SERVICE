@@ -1,17 +1,18 @@
 # Z-GRAVITY-SERVICE
 LIKE Z-GRAVITY BUT WORKING THROUGH A BACKGROUND SERVICE. DOES NOT NEED DW CONFIG.
 
-run the service just sending an Intent 
-The adb syntax is as follows.
+Run the app with the following adb command
 
-adb shell am startservice --ei GRAVITY_THRESHOLD 9 com.zebra.sensorsdata/com.zebra.sensorsdata.GravityService
+adb shell am start com.zebra.sensorsdata/com.zebra.sensorsdata.MainActivity
 
-where the number 9 is like setting the app sensitivity scroll bar rightmost.
-Any numbers between 0 (zero) and 9 are allowed.
+this in turn starts also the Gravity Service.
 
-To pass no number just use
-adb shell am startservice com.zebra.sensorsdata/com.zebra.sensorsdata.GravityService 
-the sensitivity valur in that case is 3 by default
+To start just the GravistyService, run
+
+adb shell am start-foreground-service com.zebra.sensorsdata/com.zebra.sensorsdata.GravityService
+
+Note that you need a proper Datawedge profile setup to get scan data when a different app is in the foreground.
+
 
 ## APP SETUP AND SCREENSHOTS
 - Grant all permissions - either manually or by installing with Stagenow
