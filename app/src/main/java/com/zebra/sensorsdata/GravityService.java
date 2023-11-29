@@ -20,6 +20,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.SystemClock;
+import android.provider.Settings;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -45,6 +46,7 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.Stack;
 import java.util.TimeZone;
+import java.util.UUID;
 
 //ON NOV.28, 2019: "z-gravity-service_v1.2.apk" and shared to Stephan Jacobs
 
@@ -66,6 +68,10 @@ public class GravityService extends Service implements SensorEventListener {
 
     public static int stepsPreviouslyDetected = 0;
     public static int stepsCurrentlyDetected = 0;
+
+    String deviceID = "N/A";
+
+    String shopID ="N/A";
 
     public GravityService() {
         //ShowToastInIntentService("service constructor");
@@ -97,6 +103,16 @@ public class GravityService extends Service implements SensorEventListener {
             GRAVITY_PERCENT = (float) Math.cos(Math.PI * 10.0d * intent.getIntExtra("GRAVITY_THRESHOLD", 3) / 180);
             thresholdGravity = standardGravity * GRAVITY_PERCENT;
         }
+
+
+        deviceID = getDeviceID();
+        shopID = getShopID();
+        initCSVLogFile();
+        Log.i("DeviceID", deviceID);
+        logToScreen("DeviceID: " + deviceID);
+        Log.i("shopID", shopID);
+        logToScreen("ShopID: " + shopID);
+        logToScreen("----------");
 
 
         String input = intent.getStringExtra("inputExtra");
@@ -131,9 +147,6 @@ public class GravityService extends Service implements SensorEventListener {
 
         super.onCreate();
 
-        //ShowToastInIntentService("service onCreate");
-
-        initCSVLogFile();
 
         i_startscan = new Intent();
         i_startscan.setAction("com.motorolasolutions.emdk.datawedge.api.ACTION_SOFTSCANTRIGGER");
@@ -189,7 +202,7 @@ public class GravityService extends Service implements SensorEventListener {
         String scan_data = "N/A";
         String scan_type = "N/A";
         if (dwScanIntent.getStringExtra("com.symbol.datawedge.data_string") != null) {
-            scan_data = dwScanIntent.getStringExtra("com.symbol.datawedge.data_string");
+            scan_data = cleanNonPrintableChars( dwScanIntent.getStringExtra("com.symbol.datawedge.data_string") );
             scan_type = dwScanIntent.getStringExtra("com.symbol.datawedge.label_type");
             sbAcquiredData.append("READ,");
         }
@@ -244,8 +257,12 @@ public class GravityService extends Service implements SensorEventListener {
         Log.i("Sensor Data", "-----------------------------------------------------------------------------------");
         logToScreen("----------------");
 
-
         logToFile(sbAcquiredData.toString());
+    }
+
+    private String cleanNonPrintableChars(String stringExtra) {
+        //replacing the comma since it's the field separator and all non printable chars
+        return stringExtra.replaceAll(",","_").replaceAll("[^\\x20-\\x7e]", "_");
     }
 
     private String computeDevicePose(SensorEvent targetEvent) {
@@ -267,8 +284,7 @@ public class GravityService extends Service implements SensorEventListener {
         zdt.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
         String datetimeNow = zdt.toString();
 
-        //String header = "EPOCH,TIMESTAMP,SCAN DATA,SCAN TYPE,WIFI RSSI,BSSID,SSID,GRAVITY X,GRAVITY Y,GRAVITY Z,STEPS SINCE LAST EVENT";
-        String fullstring = ""+epochUTC+","+ datetimeNow +","+ dataToBeLogged;
+        String fullstring = deviceID+","+shopID+","+epochUTC+","+ datetimeNow +","+ dataToBeLogged;
         File file = new File("/enterprise/usr/persist/z-sensors-data-log.csv");
         FileWriter fr = null;
         try {
@@ -276,6 +292,15 @@ public class GravityService extends Service implements SensorEventListener {
             fr.write(fullstring+"\n");
             fr.close();
         } catch (IOException e) {}
+    }
+
+    private String getShopID() {
+        return UUID.randomUUID().toString(); //sample shopID to be re-defined for production use
+    }
+
+    private String getDeviceID() {
+        //easily replaceable with another unique ID
+        return Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
     }
 
     private void chmodFile(String sourcePath){
@@ -289,13 +314,15 @@ public class GravityService extends Service implements SensorEventListener {
 
     private void initCSVLogFile() {
         File file = new File("/enterprise/usr/persist/z-sensors-data-log.csv");
-        FileWriter fr = null;
-        try {
-            fr = new FileWriter(file, false);
-            fr.write("EPOCH UTC,TIMESTAMP UTC,NOTIFICATION,SCAN DATA,SCAN TYPE,WIFI RSSI,BSSID,SSID,GRAVITY X,GRAVITY Y,GRAVITY Z,POSE,STEPS SINCE LAST EVENT\n");
-            fr.close();
-        } catch (IOException e) {}
-
+        if(!file.exists()) {
+            FileWriter fr = null;
+            try {
+                fr = new FileWriter(file, false);
+                fr.write("DEVICE ID,SHOP ID,EPOCH UTC,TIMESTAMP UTC,NOTIFICATION,SCAN DATA,SCAN TYPE,WIFI RSSI,BSSID,SSID,GRAVITY X,GRAVITY Y,GRAVITY Z,POSE,STEPS SINCE LAST EVENT\n");
+                fr.close();
+            } catch (IOException e) {
+            }
+        }
         chmodFile("/enterprise/usr/persist/z-sensors-data-log.csv");
     }
 
