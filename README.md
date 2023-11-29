@@ -7,9 +7,12 @@ adb shell am start com.zebra.sensorsdata/com.zebra.sensorsdata.MainActivity
 
 this in turn starts also the Gravity Service.
 
-To pass no number just use
-adb shell am startservice com.zebra.sensorsdata/com.zebra.sensorsdata.GravityService 
-the sensitivity valur in that case is 3 by default
+To start just the GravistyService, run
+
+adb shell am start-foreground-service com.zebra.sensorsdata/com.zebra.sensorsdata.GravityService
+
+Note that you need a proper Datawedge profile setup to get scan data when a different app is in the foreground.
+
 
 ## APP SETUP AND SCREENSHOTS
 - Grant all permissions - either manually or by installing with Stagenow
