@@ -58,7 +58,6 @@ public class MainActivity extends AppCompatActivity {
 
         startService(new Intent(this, GravityService.class));
 
-        new WiFence(this);
     }
 
     @Override

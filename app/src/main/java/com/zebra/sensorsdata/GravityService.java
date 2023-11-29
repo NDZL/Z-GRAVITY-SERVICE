@@ -105,6 +105,7 @@ public class GravityService extends Service implements SensorEventListener {
         }
 
 
+
         deviceID = getDeviceID();
         shopID = getShopID();
         initCSVLogFile();
@@ -176,6 +177,8 @@ public class GravityService extends Service implements SensorEventListener {
 
         myStepDetectorSensor = mySensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR);
         mySensorManager.registerListener(this, myStepDetectorSensor, SensorManager.SENSOR_DELAY_NORMAL);
+
+        new WiFence(this);
     }
 
     private void logScanAndSensorsData(Intent dwScanIntent) {
@@ -368,7 +371,8 @@ public class GravityService extends Service implements SensorEventListener {
     };
 
     public void logToScreen(final String sText) {
-        MainActivity.tvOut.setText(sText+"\n"+MainActivity.tvOut.getText());
+        if(MainActivity.tvOut != null) //when this service is starting directly with an Intent, MainActivity is not defined
+            MainActivity.tvOut.setText(sText+"\n"+MainActivity.tvOut.getText());
     };
 
 }
