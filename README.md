@@ -25,9 +25,15 @@ the sensitivity valur in that case is 3 by default
 
   ![image](https://github.com/NDZL/Z-GRAVITY-SERVICE/assets/11386676/b38b9333-c2f0-4443-883c-8fb2b80dee58)
 
-* Retrieve the log file
+* To retrieve the log file
   * adb pull /enterprise/usr/persist/z-sensors-data-log.csv
 
-* View the log file
+* To view the log file
   * adb shell more /enterprise/usr/persist/z-sensors-data-log.csv
+ 
+* To remove an existing log (specifically if you migrated from a previous app version)
+  1. restart the device 
+  1. adb shell rm /enterprise/usr/persist/z-sensors-data-log.csv
+ 
+   
 
