@@ -4,19 +4,20 @@ LIKE Z-GRAVITY BUT WORKING THROUGH A BACKGROUND SERVICE. DOES NOT NEED DW CONFIG
 
 ## APP SETUP, LAUNCH, SCREENSHOTS
 - Grant all permissions - either manually or by installing with Stagenow
-- or install with adb install -g z-sensors-data-v1.32d.apk (adjust the apk name)
+- or install with
+```adb install -g z-sensors-data-v1.32d.apk (adjust the apk name)```
 
 
 
 - Run the app with the following adb command
 
-adb shell am start com.zebra.sensorsdata/com.zebra.sensorsdata.MainActivity
+```adb shell am start com.zebra.sensorsdata/com.zebra.sensorsdata.MainActivity```
 
 - this in turn starts also the Gravity Service.
 
 - To start just the GravistyService, run
 
-adb shell am start-foreground-service com.zebra.sensorsdata/com.zebra.sensorsdata.GravityService
+```adb shell am start-foreground-service com.zebra.sensorsdata/com.zebra.sensorsdata.GravityService```
 
 - Note that you need a proper Datawedge profile setup to get scan data when a different app is in the foreground.
 
@@ -28,6 +29,7 @@ adb shell am start-foreground-service com.zebra.sensorsdata/com.zebra.sensorsdat
 
 ## APP INTERNALS
 - Designed for A13, Supports Android 9+
+- Successfully tested on PS20 A9 and A11; TC58 A11 and A13; TC21 A13
 
   ![image](https://github.com/NDZL/Z-GRAVITY-SERVICE/assets/11386676/b38b9333-c2f0-4443-883c-8fb2b80dee58)
 
@@ -43,3 +45,4 @@ adb shell am start-foreground-service com.zebra.sensorsdata/com.zebra.sensorsdat
  
    
 
+`
