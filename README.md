@@ -34,14 +34,14 @@ LIKE Z-GRAVITY BUT WORKING THROUGH A BACKGROUND SERVICE. DOES NOT NEED DW CONFIG
   ![image](https://github.com/NDZL/Z-GRAVITY-SERVICE/assets/11386676/b38b9333-c2f0-4443-883c-8fb2b80dee58)
 
 * To retrieve the log file
-  * adb pull /enterprise/usr/persist/z-sensors-data-log.csv
+  * ```adb pull /enterprise/usr/persist/z-sensors-data-log.csv```
 
 * To view the log file
-  * adb shell more /enterprise/usr/persist/z-sensors-data-log.csv
+  * ```adb shell more /enterprise/usr/persist/z-sensors-data-log.csv```
  
 * To remove an existing log (specifically if you migrated from a previous app version)
   1. restart the device 
-  1. adb shell rm /enterprise/usr/persist/z-sensors-data-log.csv
+  1. ```adb shell rm /enterprise/usr/persist/z-sensors-data-log.csv```
  
    
 
