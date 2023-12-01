@@ -38,6 +38,9 @@
             android:exported="true"
             android:stopWithTask="true">
         </service>
+
+
+
     </application>
 
 </manifest>

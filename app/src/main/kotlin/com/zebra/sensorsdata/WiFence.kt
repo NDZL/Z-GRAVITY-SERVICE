@@ -3,14 +3,8 @@ package com.zebra.sensorsdata
 import android.content.Context
 import android.media.AudioManager
 import android.media.ToneGenerator
-import android.net.ConnectivityManager
-import android.net.Network
-import android.net.NetworkCapabilities
-import android.net.NetworkRequest
-import android.net.wifi.WifiInfo
 import android.net.wifi.WifiManager
 import android.util.Log
-import com.zebra.sensorsdata.GravityService
 import java.util.Timer
 import kotlin.concurrent.timerTask
 
@@ -36,12 +30,15 @@ public class WiFence(context: Context) {
                 wfinfo.ssid = wifiManager.connectionInfo.ssid?.toString().orEmpty()
 
                 GravityService.wifiEvents.add( wfinfo )
-                if(wifiManager.connectionInfo.rssi<-80) {
+                if(isWiFenceON && wifiManager.connectionInfo.rssi<-80) {
                     tg.startTone(ToneGenerator.TONE_CDMA_EMERGENCY_RINGBACK, 200);
                     Log.i("Geofence Alarm","DEVICE LEFT THE WIFI AREA")
                 }
 
             }, 2000, 3000)
         }
+    companion object{
+        var isWiFenceON = true
+    }
 
 }

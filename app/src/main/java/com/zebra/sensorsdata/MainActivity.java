@@ -1,5 +1,7 @@
 package com.zebra.sensorsdata;
 
+import android.app.ActivityManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -56,8 +58,18 @@ public class MainActivity extends AppCompatActivity {
                                                }
         );
 
-        startService(new Intent(this, GravityService.class));
+        if( !isMyServiceRunning(GravityService.class) )
+            startService(new Intent(this, GravityService.class));
+    }
 
+    private boolean isMyServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override

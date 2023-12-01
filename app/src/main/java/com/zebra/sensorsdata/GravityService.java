@@ -1,6 +1,7 @@
 package com.zebra.sensorsdata;
 
 import static android.app.PendingIntent.FLAG_IMMUTABLE;
+import static android.view.MotionEvent.ACTION_CANCEL;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -10,6 +11,7 @@ import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -69,6 +71,13 @@ public class GravityService extends Service implements SensorEventListener {
     public static int stepsPreviouslyDetected = 0;
     public static int stepsCurrentlyDetected = 0;
 
+    final public static String ACTION_TOGGLE_WIFENCE = "TOGGLE_WIFENCE_STATE";
+    final public static String WIFENCE_STATUS_ON = "WIFENCE is ON - Tap to toggle";
+    final public static String WIFENCE_STATUS_OFF = "WIFENCE is OFF - Tap to toggle";
+    public static Notification notification;
+
+    public static NotificationManager nmanager;
+
     String deviceID = "N/A";
 
     String shopID ="N/A";
@@ -118,30 +127,41 @@ public class GravityService extends Service implements SensorEventListener {
 
         String input = intent.getStringExtra("inputExtra");
         createNotificationChannel();
-        Intent notificationIntent = new Intent(this, MainActivity.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this,0, notificationIntent, FLAG_IMMUTABLE);
-        Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
+        Intent notificationIntent = new Intent(this, MainActivity.class);//opens MainActivity when the notification is tapped on
+        PendingIntent notifPendingIntent = PendingIntent.getActivity(this,0, notificationIntent, FLAG_IMMUTABLE);
+
+        Intent toggleWifenceIntent = new Intent();
+        toggleWifenceIntent.setAction( ACTION_TOGGLE_WIFENCE );
+        PendingIntent toggleWifencePendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 4004, toggleWifenceIntent, PendingIntent.FLAG_UPDATE_CURRENT|FLAG_IMMUTABLE);
+
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addCategory(Intent.CATEGORY_DEFAULT);
+        intentFilter.addAction(ACTION_TOGGLE_WIFENCE);
+        registerReceiver(new NotificationBC(), intentFilter); //RECEIVER TESTED WITH adb shell am broadcast -a TOGGLE_WIFENCE_STATE
+
+        notification = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setContentTitle("ZGravity-FGS")
                 .setContentText(input)
                 .setSmallIcon(R.drawable.ic_notification)
-                .setContentIntent(pendingIntent)
+                .setContentIntent(notifPendingIntent)
+                .addAction(R.drawable.ic_launcher_background, WIFENCE_STATUS_ON, toggleWifencePendingIntent)
                 .build();
+
         startForeground(3003, notification);
 
         return START_NOT_STICKY;
     }
 
     private void createNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel serviceChannel = new NotificationChannel(
-                    CHANNEL_ID,
-                    "Foreground Service Channel",
-                    NotificationManager.IMPORTANCE_DEFAULT
-            );
-            NotificationManager manager = getSystemService(NotificationManager.class);
-            manager.createNotificationChannel(serviceChannel);
-        }
+        NotificationChannel serviceChannel = new NotificationChannel(
+                CHANNEL_ID,
+                "Foreground Service Channel",
+                NotificationManager.IMPORTANCE_DEFAULT
+        );
+        nmanager = getSystemService(NotificationManager.class);
+        nmanager.createNotificationChannel(serviceChannel);
     }
+
 
     @Override
     public void onCreate() {
@@ -184,8 +204,7 @@ public class GravityService extends Service implements SensorEventListener {
     private void logScanAndSensorsData(Intent dwScanIntent) {
 
         //https://developer.android.com/reference/android/hardware/SensorEvent#values
-        //StringBuilder sbSCAN_DATA = new StringBuilder();
-        //StringBuilder sbNOTIFICATIONS = new StringBuilder();
+
         StringBuilder sbAcquiredData = new StringBuilder();
 
         String scanner_Status = "N/A";
@@ -195,12 +214,6 @@ public class GravityService extends Service implements SensorEventListener {
         }
             Log.i("Sensor Data", "SCAN NOTIFICATION: " + scanner_Status);
             logToScreen("SCAN NOTIFICATION: "+scanner_Status);
-
-
-            //logToFile(sbNOTIFICATIONS.toString());
-
-
-            // if(dwScanIntent.getStringExtra("com.symbol.datawedge.data_string") == null ) return; //not to log to many times the same data
 
         String scan_data = "N/A";
         String scan_type = "N/A";
