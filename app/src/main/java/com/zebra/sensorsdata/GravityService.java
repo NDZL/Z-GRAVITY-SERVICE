@@ -1,7 +1,6 @@
 package com.zebra.sensorsdata;
 
 import static android.app.PendingIntent.FLAG_IMMUTABLE;
-import static android.view.MotionEvent.ACTION_CANCEL;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -16,38 +15,23 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.net.wifi.WifiInfo;
-import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
-import android.os.SystemClock;
 import android.provider.Settings;
 import android.util.Log;
 import android.widget.Toast;
 
 import androidx.core.app.NotificationCompat;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.text.SimpleDateFormat;
 import java.time.Clock;
 import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeFormatterBuilder;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Locale;
 import java.util.Objects;
 import java.util.Stack;
-import java.util.TimeZone;
 import java.util.UUID;
 
 //ON NOV.28, 2019: "z-gravity-service_v1.2.apk" and shared to Stephan Jacobs
@@ -137,7 +121,7 @@ public class GravityService extends Service implements SensorEventListener {
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addCategory(Intent.CATEGORY_DEFAULT);
         intentFilter.addAction(ACTION_TOGGLE_WIFENCE);
-        registerReceiver(new NotificationBC(), intentFilter); //RECEIVER TESTED WITH adb shell am broadcast -a TOGGLE_WIFENCE_STATE
+        registerReceiver(new NotificationBR(), intentFilter); //RECEIVER TESTED WITH adb shell am broadcast -a TOGGLE_WIFENCE_STATE
 
         notification = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setContentTitle("ZGravity-FGS")

@@ -1,20 +1,14 @@
 package com.zebra.sensorsdata
 
-import android.Manifest
 import android.annotation.SuppressLint
-import android.app.NotificationManager
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
-import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationManagerCompat
-import androidx.core.content.ContextCompat.getSystemService
 import com.zebra.sensorsdata.GravityService.WIFENCE_STATUS_OFF
 import com.zebra.sensorsdata.GravityService.WIFENCE_STATUS_ON
-import com.zebra.sensorsdata.GravityService.nmanager
 
-class NotificationBC: BroadcastReceiver() {
+class NotificationBR: BroadcastReceiver() {
     @SuppressLint("MissingPermission")
     override fun onReceive(context: Context, intent: Intent?) {
 
