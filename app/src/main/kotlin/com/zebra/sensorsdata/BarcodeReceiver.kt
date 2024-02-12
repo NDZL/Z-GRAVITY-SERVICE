@@ -63,6 +63,7 @@ fun createDataWedgeProfile(context: Context, barcodeReceiver: BroadcastReceiver)
     filter.addCategory(Intent.CATEGORY_DEFAULT)
     filter.addAction(Activity_Intent_Filter)
     filter.addAction(NOTIFICATION_ACTION)
+    //filter.addAction("com.symbol.datawedge.DWDEMO")  //DWDemo does not work with broadcast intents
     context.registerReceiver(barcodeReceiver, filter)//register broadcast receiver
 }
 

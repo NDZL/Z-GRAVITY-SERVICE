@@ -15,6 +15,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
@@ -183,6 +184,7 @@ public class GravityService extends Service implements SensorEventListener {
         mySensorManager.registerListener(this, myStepDetectorSensor, SensorManager.SENSOR_DELAY_NORMAL);
 
         new WiFence(this);
+
     }
 
     private void logScanAndSensorsData(Intent dwScanIntent) {
