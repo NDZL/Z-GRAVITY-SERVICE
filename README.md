@@ -21,8 +21,12 @@
 - Note that you need a proper Datawedge profile setup to get scan data when a different app is in the foreground.
 
 
+### Permissions needed on A13 and A8
 
-  ![image](https://github.com/NDZL/Z-GRAVITY-SERVICE/assets/11386676/4c602ed0-a393-4711-bb08-fa46f2fe7941)
+![image](https://github.com/NDZL/Z-GRAVITY-SERVICE/assets/11386676/482d0542-5a6c-4ab3-9fd7-d5c8a2d998eb)
+
+![image](https://github.com/NDZL/Z-GRAVITY-SERVICE/assets/11386676/a3d0c2b5-1308-4c1f-b861-cb48066abe01)
+
 ![image](https://github.com/NDZL/Z-GRAVITY-SERVICE/assets/11386676/794588f1-9675-4fa7-8a3a-44f4db0731b8)
 
 
