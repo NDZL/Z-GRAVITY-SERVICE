@@ -4,7 +4,7 @@
 ## APP SETUP, LAUNCH, SCREENSHOTS
 - Grant all permissions - either manually or by installing with Stagenow
 - or install with
-```adb install -g z-sensors-data-v1.32d.apk (adjust the apk name)```
+  ```adb install -g z-sensors-data-v1.32d.apk (adjust the apk name)```
 
 
 
@@ -39,11 +39,11 @@
 
 * To view the log file
   * ```adb shell more /enterprise/usr/persist/z-sensors-data-log.csv```
- 
+
 * To remove an existing log (specifically if you migrated from a previous app version)
-  1. restart the device 
+  1. restart the device
   1. ```adb shell rm /enterprise/usr/persist/z-sensors-data-log.csv```
- 
-   
+
+
 
 `

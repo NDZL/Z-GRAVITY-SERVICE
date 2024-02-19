@@ -4,13 +4,13 @@ apply plugin: 'com.android.application'
 
 android {
 
-    compileSdk 34
+    compileSdk 28
     defaultConfig {
         applicationId "com.zebra.sensorsdata"
         minSdk 27
-        targetSdk 33
+        targetSdk 28
         versionCode 1
-        versionName '1.6-A8+,noSerial'
+        versionName '1.7-ALL_API_28'
 
     }
 
@@ -18,13 +18,13 @@ android {
         sourceCompatibility = 1.8
         targetCompatibility = 1.8
     }
-    buildToolsVersion = '33.0.1'
+    buildToolsVersion = '28.0.1'
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation "org.jetbrains.kotlin:kotlin-stdlib:1.7.10"
-
+    implementation 'com.symbol:emdk:9.1.1'
 }

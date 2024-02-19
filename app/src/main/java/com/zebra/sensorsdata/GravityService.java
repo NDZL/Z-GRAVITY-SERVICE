@@ -21,6 +21,7 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.provider.Settings;
 import android.util.Log;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.core.app.NotificationCompat;
@@ -63,8 +64,6 @@ public class GravityService extends Service implements SensorEventListener {
 
     public static NotificationManager nmanager;
 
-    String deviceID = "N/A";
-
     String shopID ="N/A";
 
     public GravityService() {
@@ -88,7 +87,13 @@ public class GravityService extends Service implements SensorEventListener {
         this.stopSelf();
     }
 
+
+    String getDeviceSerialNumber(){
+        return  OEMInfoManager.OEMINFO_DEVICE_SERIAL;
+
+    }
     public static final String CHANNEL_ID = "Foreground Service Channel";
+
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         //ShowToastInIntentService("service onStartCommand");
@@ -100,11 +105,17 @@ public class GravityService extends Service implements SensorEventListener {
 
 
 
-        deviceID = getDeviceID();
+        if(Build.VERSION.SDK_INT<29){
+            OEMInfoManager.OEMINFO_DEVICE_SERIAL = Build.getSerial() ;  //REMINDER: MANUALLY GRANT THE PHONE STATE PERMISSION!
+        }
+        else {
+            new OEMInfoManager(this.getApplicationContext());
+        }
+
         shopID = getShopID();
         initCSVLogFile();
-        Log.i("DeviceID", deviceID);
-        logToScreen("DeviceID: " + deviceID);
+        Log.i("DeviceID", getDeviceSerialNumber());
+        logToScreen("DeviceID: " + getDeviceSerialNumber());
         Log.i("shopID", shopID);
         logToScreen("ShopID: " + shopID);
         logToScreen("----------");
@@ -185,6 +196,7 @@ public class GravityService extends Service implements SensorEventListener {
 
         new WiFence(this);
 
+       // String serial = Build.getSerial();
     }
 
     private void logScanAndSensorsData(Intent dwScanIntent) {
@@ -286,7 +298,7 @@ public class GravityService extends Service implements SensorEventListener {
         zdt.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
         String datetimeNow = zdt.toString();
 
-        String fullstring = deviceID+","+shopID+","+epochUTC+","+ datetimeNow +","+ dataToBeLogged;
+        String fullstring = getDeviceSerialNumber()+","+shopID+","+epochUTC+","+ datetimeNow +","+ dataToBeLogged;
         File file = new File("/enterprise/usr/persist/z-sensors-data-log.csv");
         FileWriter fr = null;
         try {

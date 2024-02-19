@@ -15,6 +15,16 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
 
+    <uses-permission android:name="com.symbol.emdk.permission.EMDK"/>
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="com.zebra.provider.READ"/>
+
+    <!--  Required for Content provider restrictions introduced in Android 11 -->
+    <queries>
+        <package android:name="com.zebra.zebracontentprovider" />
+    </queries>
+
+
     <application
         android:allowBackup="true"
         tools:replace="android:icon"
@@ -23,6 +33,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light">
+        <uses-library android:name="com.symbol.emdk" />
 
         <activity android:name="com.zebra.sensorsdata.MainActivity" android:exported="true">
             <intent-filter>
