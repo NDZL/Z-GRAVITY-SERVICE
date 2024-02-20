@@ -19,6 +19,8 @@
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="com.zebra.provider.READ"/>
 
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
     <!--  Required for Content provider restrictions introduced in Android 11 -->
     <queries>
         <package android:name="com.zebra.zebracontentprovider" />
@@ -47,8 +49,23 @@
             android:name="com.zebra.sensorsdata.GravityService"
             android:enabled="true"
             android:exported="true"
-            android:stopWithTask="true">
+            android:stopWithTask="false"
+            android:directBootAware="true"
+            android:showOnLockScreen="true">
         </service>
+
+        <receiver
+            android:name=".NotificationBR"
+            android:directBootAware="true"
+            android:enabled="true"
+            android:exported="true">
+
+
+            <intent-filter>
+                <action android:name="android.intent.action.LOCKED_BOOT_COMPLETED" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
 
 
 

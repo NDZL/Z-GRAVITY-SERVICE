@@ -2,6 +2,7 @@ package com.zebra.sensorsdata;
 
 import static android.app.PendingIntent.FLAG_IMMUTABLE;
 
+import android.app.Application;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -84,13 +85,12 @@ public class GravityService extends Service implements SensorEventListener {
 
         super.onTaskRemoved(rootIntent);
 
-        this.stopSelf();
+        //this.stopSelf();
     }
 
 
     String getDeviceSerialNumber(){
-        return  OEMInfoManager.OEMINFO_DEVICE_SERIAL;
-
+        return  (new OEMInfoManager(this)).OEMINFO_DEVICE_SERIAL;
     }
     public static final String CHANNEL_ID = "Foreground Service Channel";
 

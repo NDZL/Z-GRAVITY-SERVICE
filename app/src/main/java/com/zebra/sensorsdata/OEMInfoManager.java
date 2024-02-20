@@ -39,6 +39,7 @@ public class OEMInfoManager implements EMDKManager.EMDKListener  {
     String URI_WIFI_MAC = "content://oem_info/oem.zebra.secure/wifi_mac";
 
 
+
     //Assign the profile name used in EMDKConfig.xml
     private String profileName = "";
 
@@ -63,15 +64,16 @@ public class OEMInfoManager implements EMDKManager.EMDKListener  {
     Context context;
     public OEMInfoManager(Context ctx){
         context =ctx;
-        EMDKResults results = EMDKManager.getEMDKManager(context.getApplicationContext(), this);
-        if(results.statusCode == EMDKResults.STATUS_CODE.SUCCESS) {
-            //EMDKManager object creation success
-        }else {
-            //EMDKManager object creation failed
+        if(OEMINFO_DEVICE_SERIAL.equals("N/A")) {
+            EMDKResults results = EMDKManager.getEMDKManager(context.getApplicationContext(), this);
+            if (results.statusCode == EMDKResults.STATUS_CODE.SUCCESS) {
+                //EMDKManager object creation success
+            } else {
+                //EMDKManager object creation failed
+            }
         }
 
     }
-
 
     private void RetrieveOEMInfo(Uri uri, boolean isIMEI) {
         //  For clarity, this code calls ContentResolver.query() on the UI thread but production code should perform queries asynchronously.
