@@ -10,7 +10,7 @@ android {
         minSdk 27
         targetSdk 28
         versionCode 1
-        versionName '1.9-PROXIMITY SENSOR'
+        versionName '1.9-LONGDISTANCEPROX PROXIMITY SENSOR'
 
     }
 
