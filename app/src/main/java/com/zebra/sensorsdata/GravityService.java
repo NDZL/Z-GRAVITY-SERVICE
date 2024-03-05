@@ -33,6 +33,7 @@ import java.io.IOException;
 import java.time.Clock;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Objects;
 import java.util.Stack;
 import java.util.UUID;
@@ -46,6 +47,7 @@ public class GravityService extends Service implements SensorEventListener {
     private SensorManager mySensorManager;
     private Sensor myGravitySensor;
     private Sensor myStepDetectorSensor;
+    private Sensor myProximitySensor;
     float standardGravity;
     float thresholdGravity;
     float GRAVITY_PERCENT = .90f;
@@ -193,6 +195,17 @@ public class GravityService extends Service implements SensorEventListener {
 
         myStepDetectorSensor = mySensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR);
         mySensorManager.registerListener(this, myStepDetectorSensor, SensorManager.SENSOR_DELAY_NORMAL);
+
+        //myProximitySensor = mySensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);  //standard proximity sensor
+        myProximitySensor = mySensorManager.getDefaultSensor(65537);  //from PS20 com.symbol.autotrigger
+        mySensorManager.registerListener(this, myProximitySensor, SensorManager.SENSOR_DELAY_NORMAL);
+
+        //TRYING TO LOG THE DEVICE SENSORS LIST
+        StringBuilder _sbsesns=new StringBuilder();
+        List<Sensor> sensorsList = mySensorManager.getSensorList(Sensor.TYPE_ALL);
+        for (Sensor s : sensorsList) {
+            Log.i("Sensors list", ""+s.getType()+"-"+s.getName()+"-"+s.getVendor());
+        }
 
         new WiFence(this);
 
@@ -362,6 +375,12 @@ public class GravityService extends Service implements SensorEventListener {
             stepsCurrentlyDetected++;
             //logToScreen("TYPE_STEP_DETECTOR "+stepsDetected);
         }
+        else if(event.sensor.getType() == 65537)
+                if(event.values.length>0)
+                    Log.i("onSensorChanged", "TYPE_PROXIMITY "+event.values[0]);  //TC21 OK - NO EVENTS RAISED IN PS20
+                else
+                    Log.i("onSensorChanged", "TYPE_PROXIMITY -EMPTY EVENT");
+
     }
 
     @Override
